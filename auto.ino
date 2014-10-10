@@ -1,6 +1,9 @@
+#include <ShortestPath.h>
 
-#include "ShortestPath.h"
+#include <EEPROM.h>
 #include <QueueList.h>
+
+
 
 #define MAX_ROW 5 // row number
 #define MAX_COL 10 // column number
@@ -44,11 +47,12 @@ void setup(){
   
   pinMode(dry_run_switch,INPUT_PULLUP);
   pinMode(main_run_switch,INPUT_PULLUP);
+  
+  
 }
 
 void loop(){
   
-  Serial.println('Hello');
   
   if(digitalRead(dry_run_switch)==LOW){
     if(dry_run==false)start_dry_run();
