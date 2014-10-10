@@ -1,9 +1,6 @@
 #include <ShortestPath.h>
-
 #include <EEPROM.h>
 #include <QueueList.h>
-
-
 
 #define MAX_ROW 5 // row number
 #define MAX_COL 10 // column number
@@ -47,6 +44,7 @@ void setup(){
   
   pinMode(dry_run_switch,INPUT_PULLUP);
   pinMode(main_run_switch,INPUT_PULLUP);
+  
   
   
 }
@@ -94,43 +92,29 @@ void loop(){
   
   if(current_pos_x==3 && direction==NORTH){
     
-    //set_current_pos(current_pos_x+1,current_pos_y);
-    //p[current_pos_x][current_pos_y] = forward_status;
+
     turn_left();
     direction = WEST;
     
   }
   else if(current_pos_x==4 && direction==WEST){
-    //set_current_pos(current_pos_x,current_pos_y+1);
-    //p[current_pos_x][current_pos_y] = forward_status;
+
     turn_left();  
     direction = SOUTH;
   }
   
   
   else if( current_pos_x==1 && direction == SOUTH ){
-    //set_current_pos(current_pos_x-1,current_pos_y );
-    //p[current_pos_x][current_pos_y] = forward_status;
+    
     turn_right();
     direction = WEST;
   }
   
   else if(current_pos_x==0 && direction==WEST){
-    //set_current_pos(current_pos_x,current_pos_y+1);
-    //p[current_pos_x][current_pos_y] = forward_status;
+
     turn_right();
     direction = NORTH;    
   }
-  /*else{
-    if(direction==SOUTH){
-      set_current_pos(current_pos_x-1,current_pos_y);
-      p[current_pos_x][current_pos_y] = forward_status;
-    }
-    else if(direction==NORTH){
-          set_current_pos(current_pos_x+1,current_pos_y);
-          p[current_pos_x][current_pos_y] = forward_status;
-    }
-  }*/
   
   
   }
@@ -138,14 +122,20 @@ void loop(){
   
   else if( digitalRead(main_run_switch)==LOW ){
     
-    
-    
+    main_run_fun();
     
   }
   
-  
-  
 }
+
+/*
+* function for main run
+*/
+
+void main_run_fun(){
+
+}
+
 
 /*
 * function for forward motion of the auto and continously checking node with IR.
@@ -156,9 +146,7 @@ int go_forward(){
   // code for the auto to go forward
  
   while(true){
-    
-       
-    
+   
       if( get_ir(ir1)==0 && 
           get_ir(ir4)==0 &&
           get_ir(ir2)==1 &&
@@ -231,6 +219,24 @@ void start_dry_run(){
 void end_dry_run(){
   dry_run = false;
   p[4][3] = p[2][10] = p[3][10] = 1; // hard-code position for hole  
+  
+  int pos = 0;  // position for eeprom write
+  
+  
+  // EEPROM write for the arduino
+  
+  for(int i=0;i<MAX_ROW;i++){
+    for(int j=0;j<MAX_COL;j++){
+      Serial.write(p[i][j]);
+      EEPROM.write(p[i][j],pos);
+      pos = pos+1;
+    } 
+  }
+    
+    
+  
+  
+  
 }
 
 int get_ir(int ir_pin){
@@ -245,6 +251,22 @@ int get_ir(int ir_pin){
   }
   
 }
+
+/*int getPoint(int x,int y){
+    return x*MAX_COL+y;
+}
+
+
+int getX(int point){
+    return point/MAX_COL;
+}
+
+int getY( int point ){
+    return point%MAX_COL;
+}*/
+
+
+
 
 void escape_box(){
   
